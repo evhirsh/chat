@@ -12,7 +12,7 @@
       </div>
       <div class="col-sm-5">
           <label for="roomInput">Choose room</label>
-          <select name="roomInput" id="roomInput" class="form-control" [(ngModel)]="room">
+          <select name="roomInput" id="roomInput" class="form-control" [(ngModel)]="room" (change)="changeMessageArea(room)">
               <option value="Lobby">Lobby</option>
               <option value="Hall">Hall</option>
               <option value="Deluxe">Deluxe</option>
@@ -27,7 +27,7 @@
   </div>
 
   <div class="row">
-      <div class="well" style="height:200px; padding:15px;">
+      <div class="well" style="height:200px; padding:15px;scroll-behavior:auto">
           <div *ngFor="let item of messageArray">
           <span><strong>{{item.user}} : </strong> {{item.message}}</span>
           </div>

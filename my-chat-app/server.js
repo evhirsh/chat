@@ -53,12 +53,18 @@ io.on('connection',(socket)=>{
 
 
     socket.on('join', function(data){
-      //joining
+     
+      socket.username = data.user;
+      // store the room name in the socket session for this client
+      socket.room = data.room;
+      // send client to room 1
       socket.join(data.room);
-
+      // echo to room 1 that a person has connected to their room
       console.log(data.user + 'joined the room : ' + data.room);
 
       socket.broadcast.to(data.room).emit('new user joined', {user:data.user, message:'has joined this room.'});
+
+      
     });
 
 
@@ -67,14 +73,30 @@ io.on('connection',(socket)=>{
       console.log(data.user + 'left the room : ' + data.room);
 
       socket.broadcast.to(data.room).emit('left room', {user:data.user, message:'has left this room.'});
+      socket.room='';
 
       socket.leave(data.room);
     });
 
     socket.on('message',function(data){
-
-      io.in(data.room).emit('new message', {user:data.user, message:data.message});
+      if (data.room === socket.room) io.in(data.room).emit('new message', {user:data.user, message:data.message});
     })
+
+    socket.on('switchRoom', function(newroom){
+      // leave the current room (stored in session)
+    console.log("in switch")
+    console.log("newroom",newroom)
+    console.log("old",socket.room)
+      socket.leave(socket.room);
+      // join new room, received as function parameter
+      socket.join(newroom);
+      socket.broadcast.to(socket.room).emit('left room', {user:socket.username, message:'has left this room.'});
+      // update socket session room title
+      socket.room = newroom;
+      socket.broadcast.to(newroom).emit('new user joined',  {user:socket.username, message:'has join this room.'});
+  
+    });
+  
 });
 
 /**

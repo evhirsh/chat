@@ -37,4 +37,10 @@ export class AppComponent {
         this._chatService.sendMessage({user:this.user, room:this.room, message:this.messageText});
     }
 
+    changeMessageArea(room){
+        this.messageArray=[];
+        this._chatService.switchRooms(room)
+    }
+
+    
 }

@@ -58,6 +58,10 @@ export class ChatService {
         });
 
         return observable;
-}
+    }
+
+    switchRooms(data){
+        this.socket.emit('switchRoom',data);
+    }
 }
 
