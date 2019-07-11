@@ -1,0 +1,21 @@
+<div class="container">
+  <h1>Chat Groups Lists Info <button class="btn btn-success" (click)="logout()">Logout</button></h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Creator</th>
+        <th>Date of creation</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let group of groups">
+        <td>{{ group.name }}</td>
+        <td>{{ group.creator }}</td>
+        <td>{{ group.date }}</td>
+        <td><i class="fa fa-trush"></i></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

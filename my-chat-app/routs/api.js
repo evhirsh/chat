@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const config = require('../config/database');
+const config = require('../config/db');
 require('../config/passport')(passport);
 const jwt = require('jsonwebtoken');
 const {User,validateUser} = require("../models/user");
@@ -14,19 +14,29 @@ router.get('/', function(req, res, next) {
 
 router.post('/signup' ,async (req,res) => {
   if (!req.body.username || !req.body.password) {
+    console.log("post if no vars")
       res.json({success: false, msg: 'Please pass username and password.'});
   } else {
     
         let user = await User.findOne({username:req.body.username});
+
+        console.log("post else  vars",user)
+
         if (user) {
+          console.log(" users exist",user)
+
           return res.json({success: false, msg: 'Username already exists.'});
         } else {
             user = new User ({
             username:req.body.username,
             password:req.body.password
             });
-            let {error} = validateUser(user);
-            if(error) return res.status(404).json({success: false, msg: error.details[0].message});
+            console.log("here----",user)
+
+            // let {error} = validateUser(user);
+            // if(error) return res.status(404).json({success: false, msg: error.details[0].message});
+            console.log("before saving",user)
+
             await user.save();
             res.json({success: true, msg: 'Successful created new user.'});
         }
@@ -36,9 +46,10 @@ router.post('/signup' ,async (req,res) => {
 
 
 router.post('/signin' , async (req,res) => {
+  console.log("in sign in",req.body);
   let user = await User.findOne({username:req.body.username});
         if (!user) {
-          return res.status(401).send({success: false, msg: 'Username already exists.'});
+          return res.status(401).send({success: false, msg: 'Username isn\'t exists.'});
         } else {
           let isMatch = await user.comparePassword(req.body.password);
           if (isMatch){
@@ -46,7 +57,7 @@ router.post('/signin' , async (req,res) => {
           // return the information including token as JSON
           res.json({success: true, token: 'JWT ' + token});
           }else{
-            res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
+            res.status(401).send({success: false, msg: 'Authentication failed -Wrong password.'});
           }  
         }
       });
@@ -71,6 +82,7 @@ router.get('/group', passport.authenticate('jwt', { session: false}) ,async (req
   var token = getToken(req.headers);
   if (token) {
     let groups = await Group.find().select('-_id-v');
+    console.log("in getgroup rout",JSON.stringify(group));
     res.json(groups);
   }else {
     return res.status(403).send({success: false, msg: 'Unauthorized.'});

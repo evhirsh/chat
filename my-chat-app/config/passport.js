@@ -1,9 +1,9 @@
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const JwtStrategy = require('passport-jwt').Strategy,
+ ExtractJwt = require('passport-jwt').ExtractJwt;
 
 // load up the user model
-const User = require('../models/user');
-const config = require('../config/database'); // get db config file
+const {User} = require('../models/user');
+const config = require('../config/db'); // get db config file
 
 module.exports = function(passport) {
   var opts = {};
@@ -16,7 +16,6 @@ module.exports = function(passport) {
           }
           if (user) {
               console.log("in pass.js user authenticate",user);
-              req.user = user.username;
               done(null, user);
           } else {
               done(null, false);

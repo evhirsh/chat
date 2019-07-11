@@ -1,12 +1,14 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const path = require('path');
 const http = require('http');
 const logger = require('morgan');
 const passport = require('passport');
-var config = require('./config/database');
+var config = require('./config/db');
 const bodyParser = require('body-parser');
 const api = require('./routs/api')
 const app = express();
+app.use(passport.initialize());
 
 mongoose.connect(config.database,{useNewUrlParser:true})//return a promiss
 .then(() => console.log('Connected to MongoDB...'))
@@ -14,11 +16,11 @@ mongoose.connect(config.database,{useNewUrlParser:true})//return a promiss
 
 
 
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'dist')));
-app.use('/', express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'chat-app\\dist\\chat-app')));
 app.use('/api', api);
 
 
@@ -28,10 +30,24 @@ app.use('/api', api);
 
 var port  = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+// app.use(function(req, res, next) {
+//   var err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
+
+// // error handler
+// app.use(function(err, req, res, next) {
+//   res.status(err.status || 500);
+//   res.send('error');
+// });
 
 /**
  * Create HTTP server.
  */
+app.all('*',(req,res) =>{
+  res.sendfile(path.join(__dirname, 'chat-app\\dist\\chat-app\\index.html'))
+})
 
 const server = http.createServer(app);
 server.listen(port,() => console.log('listening on port 3000...'));

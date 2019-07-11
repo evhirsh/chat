@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Joi = require('Joi');
 const bcrypt = require('bcryptjs');
 
-const UserSchema =  new mongoose.Schema({
+const userSchema =  new mongoose.Schema({
     username: {
         type: String,
         maxlength: 15,
@@ -18,38 +18,52 @@ const UserSchema =  new mongoose.Schema({
 })
 
 
-UserSchema.pre('save', function (next) {
-    var user = this;
-    if (this.isModified('password') || this.isNew) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err) {
-                return next(err);
-            }
-            bcrypt.hash(user.password, salt, null, function (err, hash) {
-                if (err) {
-                    return next(err);
-                }
-                user.password = hash;
-                next();
-            });
-        });
-    } else {
-        return next();
-    }
+// userSchema.pre('save', function (next) {
+//     let user = this;
+//     console.log('presave')
+//     if (this.isModified('password') || this.isNew) {
+//         console.log("before hash ",user)
+
+//         bcrypt.genSalt(10, function (err, salt) {
+//             if (err) {
+//                 return next(err);
+//             }
+//             console.log(`salt and pass",${user.password} salt ${salt}`)
+
+//             bcrypt.hash(user.password, salt, null, function (err, hash) {
+//                 if (err) {
+//                     return next(err);
+//                 }
+//                 user.password = hash;
+//                 console.log("after hash",user)
+
+//                 next();
+//             });
+//         });
+//     } else {
+//         return next();
+//     }
+// });
+userSchema.pre('save', async function () {
+    var user=this;
+    let salt = await bcrypt.genSalt(10);
+    let hash = await bcrypt.hash(user.password,salt);
+    console.log("before save after hash")
+    this.password = hash;
 });
 
 
-UserSchema.methods.comparePassword = async function (passw) {
+userSchema.methods.comparePassword = async function (passw) {
    let isMatch = await bcrypt.compare(passw, this.password);
     return isMatch;
 };
 
-const User = mongoose.model('User',Userschema);
+const User = mongoose.model('User',userSchema);
 
 function validateUser(user) {
     const schema = {
-        username: Joi.string().maxlength(15).required(),
-        password: Joi.string().maxlength(1024).required(),
+        username: Joi.string().max(15).required(),
+        password: Joi.string().max(1024).required(),
     };
     return Joi.validate(user, schema);
 }
