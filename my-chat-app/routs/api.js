@@ -1,9 +1,84 @@
 const express = require('express');
 const router = express.Router();
-
+const passport = require('passport');
+const config = require('../config/database');
+require('../config/passport')(passport);
+const jwt = require('jsonwebtoken');
+const {User,validateUser} = require("../models/user");
+const {Group,validateGroup} = require("../models/group");
+const getToken = require('../helpers/getToken');
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.send('Express api');
 });
+
+router.post('/signup' ,async (req,res) => {
+  if (!req.body.username || !req.body.password) {
+      res.json({success: false, msg: 'Please pass username and password.'});
+  } else {
+    
+        let user = await User.findOne({username:req.body.username});
+        if (user) {
+          return res.json({success: false, msg: 'Username already exists.'});
+        } else {
+            user = new User ({
+            username:req.body.username,
+            password:req.body.password
+            });
+            let {error} = validateUser(user);
+            if(error) return res.status(404).json({success: false, msg: error.details[0].message});
+            await user.save();
+            res.json({success: true, msg: 'Successful created new user.'});
+        }
+      }
+});
+
+
+
+router.post('/signin' , async (req,res) => {
+  let user = await User.findOne({username:req.body.username});
+        if (!user) {
+          return res.status(401).send({success: false, msg: 'Username already exists.'});
+        } else {
+          let isMatch = await user.comparePassword(req.body.password);
+          if (isMatch){
+            var token = jwt.sign(user.toJSON(), config.secret);
+          // return the information including token as JSON
+          res.json({success: true, token: 'JWT ' + token});
+          }else{
+            res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
+          }  
+        }
+      });
+
+//----------group routs---------------- need to be moved to other file for making cleaner code
+router.post('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token) {
+    console.log(req.body);
+    let group = new Group({
+      creator : req.user,
+      name : req.body.name
+    });
+    let {error} = validateGroup(group);
+    if(error) return res.status(404).json({success: false, msg: error.details[0].message});
+    await group.save();
+  }else {
+    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }   
+});
+router.get('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token) {
+    let groups = await Group.find().select('-_id-v');
+    res.json(groups);
+  }else {
+    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }   
+});
+
+
+
+
 
 module.exports = router;

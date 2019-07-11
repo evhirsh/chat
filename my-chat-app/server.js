@@ -2,34 +2,24 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const logger = require('morgan');
+const passport = require('passport');
+var config = require('./config/database');
 const bodyParser = require('body-parser');
 const api = require('./routs/api')
-
 const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+mongoose.connect(config.database,{useNewUrlParser:true})//return a promiss
+.then(() => console.log('Connected to MongoDB...'))
+.catch(err => console.error('Could not connect to MongoDB...', err));
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use(function(req, res, next) {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
-//   next();
-// });
-app.use('/', api);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  res.render('index');
-});
+app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/', express.static(path.join(__dirname, 'dist')));
+app.use('/api', api);
 
 
 /**
