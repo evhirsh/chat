@@ -22,7 +22,7 @@ const Group = new mongoose.model('Group', new mongoose.Schema({
 function validateGroup(group) {
     const schema = {
         creator: Joi.string().max(15).required(),
-        name: Joi.string().minlength(3).maxlength(15).required(),
+        name: Joi.string().min(3).max(15).required(),
         date: Joi.Date()
     };
     return Joi.validate(group, schema);
