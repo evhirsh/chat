@@ -61,8 +61,20 @@ router.post('/signin' , async (req,res) => {
           }  
         }
       });
+      
+  //----------group routs---------------- need to be moved to other file for making cleaner code
+  router.get('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+    var token = getToken(req.headers);
+    if (token) {
+      let groups = await Group.find().select('-_id -v');
+      console.log("in getgroup rout",groups);
+      res.send(groups);
+    }else {
+      return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }   
+  });
 
-//----------group routs---------------- need to be moved to other file for making cleaner code
+
 router.post('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
   var token = getToken(req.headers);
   if (token) {
@@ -78,14 +90,31 @@ router.post('/group', passport.authenticate('jwt', { session: false}) ,async (re
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
   }   
 });
-router.get('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+
+router.delete('/group/:id', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
   var token = getToken(req.headers);
   if (token) {
-    let groups = await Group.find().select('-_id-v');
-    console.log("in getgroup rout",JSON.stringify(group));
-    res.json(groups);
+      console.log(req.user.username);
+      console.log(req.params.id);
+      let group = await Group.findOne({name : req.params.id});
+      console.log(group);
+
+      if (group.creator === req.user.username) {
+        let deleteObj = await group.deleteOne();
+        var mesg =deleteObj==null?"Error occured ,group wasn\'t deleted":'Group was deleted sucessesfully';
+        console.log('deletesatus',deleteObj)
+        if (mesg.match(/Error*/)) {
+          res.status(500).send({msg:mesg})
+        }else{
+          console.log('in else remove - 200')
+          res.send({msg:mesg})
+        }
+      }else{
+        res.status(401)
+        .send({'msg':"Unauthorized to remove a group that you didn\'t create"} )
+      }
   }else {
-    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    return res.status(403).send( {'msg':'Unauthorized.'});
   }   
 });
 

@@ -1,5 +1,9 @@
 <div class="container">
-  <h1>Chat Groups Lists Info <button class="btn btn-success" (click)="logout()">Logout</button></h1>
+    <div class="alert alert-warning alert-dismissible" role="alert" *ngIf="message !== ''">
+        <button type="button" (click)="message=''" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{message}}
+      </div>
+  <h1>Chat Groups Lists Info <i class="fa fa-plus-circle" (click)="openModal()"></i></h1>
   <table class="table">
     <thead>
       <tr>
@@ -10,12 +14,41 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let group of groups">
+      <tr *ngFor="let group of groups$">
         <td>{{ group.name }}</td>
         <td>{{ group.creator }}</td>
-        <td>{{ group.date }}</td>
-        <td><i class="fa fa-trush"></i></td>
+        <td>{{ group.date | date: 'dd/MM/yyyy'}}</td>
+        <td><i class="fa fa-trash" (click)="removeGroup(group.name)"></i></td>
       </tr>
     </tbody>
   </table>
 </div>
+
+
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title"> Group Adding</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form>
+            <input  id="inputModal" type="text" placeholder="Name of the group" required minlength="3" maxlength="15">
+          </form>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button"  (click)="addNewGroup(newGroup.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+ 

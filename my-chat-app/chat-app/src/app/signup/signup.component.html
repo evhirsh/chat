@@ -1,3 +1,4 @@
+<div class="bg">
 <div class="container">
   <form class="form-signin" (ngSubmit)="signup()" #signupForm="ngForm">
       <div class="alert alert-warning alert-dismissible" role="alert" *ngIf="message !== ''">
@@ -5,10 +6,19 @@
         <h1>{{message}}</h1>
       </div>
       <h2 class="form-signin-heading">Sign Up Now</h2>
-      <label for="inputText" class="sr-only">Username</label>
-      <input type="text" class="form-control" placeholder="Username" [(ngModel)]="signupData.username" name="username" required/>
-      <label for="inputPassword" class="sr-only">Password</label>
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-user"></i></span>
+          </div>    
+            <input type="text" class="form-control" placeholder="Username" [(ngModel)]="signupData.username" name="username" required/>
+      </div>     
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-lock"></i></span>
+          </div>
       <input type="password" class="form-control" placeholder="Password" [(ngModel)]="signupData.password" name="password" required/>
+      </div>
       <button class="btn btn-lg btn-primary btn-block" type="submit" [disabled]="!signupForm.form.valid">Sign Up</button>
   </form>
+</div>
 </div>

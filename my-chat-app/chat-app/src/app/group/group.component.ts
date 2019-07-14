@@ -3,44 +3,46 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from "@angular/router";
 import { Observable,of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
+import { ChatService } from '../chat.service';
 
+declare var $ : any;
 @Component({
   selector: 'app-group',
   templateUrl: './group.component.html',
   styleUrls: ['./group.component.css']
 })
+
+
 export class GroupComponent implements OnInit {
 
-  constructor(private http: HttpClient, private router: Router) { }
-  books: any;
+  constructor(private http: HttpClient, private router: Router,private chatService : ChatService) { }
   
+  
+  message='';
+  groups$ = this.chatService.gruopList$;
+  httpOptions;
   ngOnInit() {
-    let httpOptions = {
-      headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken') })
+      this.httpOptions = {
+      headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken'),'Content-Type':'application/json','Cache-Control': 'no-cache' })
     };
-    this.http.get('/api/group', httpOptions).toPromise().then(data => {
-      this.books = data;
-      console.log(this.books);
-    }, err => {
-      if(err.status === 401) {
-        this.router.navigate(['login']);
-      }
-    });
-  }
+   this.chatService.getGroups(this.httpOptions);
+   this.chatService.gruopList$.subscribe(list => this.groups$ =list);
+   }
+   
+   openModal(){
+    $('#myModal').modal('show');
+   }
+   addNewGroup(name){
+    console.log(name);
+   }
 
-  logout() {
-    localStorage.removeItem('jwtToken');
-    this.router.navigate(['login']);
-  }
-
-//   removeGroup(groupName){
-//     this.http.put('/api/group', this.httpOptions,groupName).subscribe(data => {
-//       this.books = data;
-//       console.log(this.books);
-//     }, err => {
-//       if(err.status === 403) {
-//         ;
-//       }
-//     });
-//   }
+   removeGroup(groupName){
+    console.log('gname-----',groupName)
+    // this.chatService.removeGroup(groupName,this.httpOptions)
+    this.chatService.removeGroup(groupName,this.httpOptions).catch(err => {
+        console.log('errrrrrrrrrr',err.error.msg)
+        this.message = err.error.msg;
+    })
+    
  }
+}
