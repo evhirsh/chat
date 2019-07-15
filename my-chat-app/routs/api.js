@@ -66,9 +66,20 @@ router.post('/signin' , async (req,res) => {
   router.get('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
     var token = getToken(req.headers);
     if (token) {
-      let groups = await Group.find().select('-_id -v');
+      let groups = await Group.find().select(' -v');
       console.log("in getgroup rout",groups);
       res.send(groups);
+    }else {
+      return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }   
+  });
+
+  router.get('/group/:id', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+    var token = getToken(req.headers);
+    if (token) {
+      let group = await Group.findById(req.params.id).select(' -v');
+      console.log("in ftftftft rout",group);
+      res.send(group);
     }else {
       return res.status(403).send({success: false, msg: 'Unauthorized.'});
     }   
@@ -80,16 +91,56 @@ router.post('/group', passport.authenticate('jwt', { session: false}) ,async (re
   if (token) {
     console.log(req.body);
     let group = new Group({
-      creator : req.user,
-      name : req.body.name
+      creator : req.user.username,
+      name : req.body.name,
+      description:req.body.description
     });
-    let {error} = validateGroup(group);
-    if(error) return res.status(404).json({success: false, msg: error.details[0].message});
-    await group.save();
+    // let {error} = validateGroup(group);
+    // console.log('eeror Joi post group',error.details[0].message)
+    // if(error) return res.status(404).json({success: false, msg: error.details[0].message});
+    group = await group.save();
+    var mesg =group==null?"Error occured ,group wasn\'t added":'Group was added sucessesfully';
+    console.log('addGroupStatus',group)
+    if (mesg.match(/Error*/)) {
+      res.status(500).send({msg:mesg})
+      }else{
+        console.log('in else add - 200')
+        res.send({msg:mesg})
+      }
   }else {
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
   }   
 });
+
+router.put('/group/:id', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token) {
+      console.log(req.user.username);
+      console.log(req.params.id);
+      let group = await Group.findById(req.params.id);
+      if (!group) return res.status(404).send({msg:'Group was not found'})
+      console.log(group);
+
+      if (group.creator === req.user.username) {
+        group = {
+          creator : req.user.username,
+          name : req.body.name,
+          description:req.body.description
+        };
+        group = await group.save();
+        var mesg =group==null?"Error occured ,group wasn\'t added":'Group was updated sucessesfully';
+        console.log('addGroupStatus',group)
+        if (mesg.match(/Error*/)) {
+          res.status(500).send({msg:mesg})
+        }else{
+          console.log('in else add - 200')
+          res.send({msg:mesg})
+        }
+      }}else {
+     return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }   
+  });
+
 
 router.delete('/group/:id', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
   var token = getToken(req.headers);

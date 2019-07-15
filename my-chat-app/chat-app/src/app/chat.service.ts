@@ -20,14 +20,33 @@ export class ChatService {
     .then( (data : any) => this.groups.next(data))
   }
 
-removeGroup(groupName,httpOptions){
+  getSpecificGroup(gid,httpOptions){
+     return  this.http.get(`/api/group/${gid}`,httpOptions).toPromise().then((data:any) =>{
+        console.log("in add then service",data);
+        return data;
+      }).catch(err => {
+        console.log("in get by id throw err");
+        throw err
+      })
+  }
+
+ addNewGroup(groupObj,httpOptions){
+    return this.http.post('/api/group',groupObj,httpOptions).toPromise().then(data => {
+        console.log("in add then service",data);
+        this.getGroups(httpOptions);
+    }).catch(err => {console.log("in post throw err");throw err})
+ }
+
+
+  removeGroup(groupName,httpOptions){
    return this.http.delete(`/api/group/${groupName}`,httpOptions)
     .toPromise().then((data:any) => { 
         console.log("in then service",data);
         this.getGroups(httpOptions);
-    }).catch(err => {console.log("in throw err");throw err})
-    
-}
+    }).catch(err => {console.log("in throw err");throw err})  
+  }
+
+
   
   private socket = io('http://localhost:3000');
 

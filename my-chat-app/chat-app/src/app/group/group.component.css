@@ -1,4 +1,13 @@
+
+i.fa.fa-edit {
+    margin-left: 10px;
+    margin-top: 8px
+}
 i.fa.fa-trash:hover{
+    cursor: pointer;
+}
+
+i.fa.fa-edit:hover{
     cursor: pointer;
 }
 
