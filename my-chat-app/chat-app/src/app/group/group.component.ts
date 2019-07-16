@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { Observable,of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { ChatService } from '../chat.service';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 // declare var $ : any;
 @Component({
@@ -20,8 +21,11 @@ export class GroupComponent implements OnInit {
   
   
   message='';
-  inputGname ='';
-  editDescInput =''
+  isGnameValid =false;
+  isdecChanged =false;
+  editInputGname ='';
+  editDescInput ='';
+  editGid;
   groups$ = this.chatService.gruopList$;
   httpOptions;
   ngOnInit() {
@@ -35,26 +39,41 @@ export class GroupComponent implements OnInit {
    checkValid(text){
      console.log('change')
      if(text.length >3){
-       this.inputGname='Y';
+       this.isGnameValid=true;
      }else{
-      this.inputGname='';
+      this.isGnameValid=false;
+     }
+   }
+
+   checkIfdecChanged(){
+     if (!this.isdecChanged) {
+       console.log('desc cahnged')
+       this.isdecChanged =true;
      }
    }
    
    openEditModal(gid){
      this.chatService.getSpecificGroup(gid,this.httpOptions).then(data =>{
         this.editDescInput = data.description;
-        this.inputGname = data.name;
+        this.editInputGname = data.name;
+        this.editGid = data._id;
      }).catch(err => {
       console.log('specific g errrrrrrr',err.error.msg)
       this.message = err.error.msg;
      })
+   }
+
+   clearModal(){
+     console.log("in clear modal")
+    this.editDescInput = '';
+    this.editInputGname = '';
    }
    addNewGroup(name1,desc){
     console.log(name1);
     this.chatService.addNewGroup({name:name1,description:desc},this.httpOptions).catch(err => {
       console.log('addGroup errrrrrrr',err.error.msg)
       this.message = err.error.msg;
+      this.editDescInput=''
     })
    }
 
@@ -64,7 +83,20 @@ export class GroupComponent implements OnInit {
     this.chatService.removeGroup(groupName,this.httpOptions).catch(err => {
         console.log('errrrrrrrrrr',err.error.msg)
         this.message = err.error.msg;
-    })
-    
- }
+      })
+    }
+    updateGroup(gname,desc,gid){
+      let g ={
+        name:gname,
+        description:desc,
+        id : gid
+      }
+      console.log('gname-----',gname)
+      console.log('gname-----',desc)
+      console.log('gname-----',gid)
+      this.chatService.updateGroup(g,this.httpOptions).catch(err => {
+        console.log('errrrrrrrrrr in update ',err.error.msg)
+        this.message = err.error.msg;
+      })
+    } 
 }

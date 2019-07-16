@@ -89,8 +89,10 @@ router.post('/signin' , async (req,res) => {
 router.post('/group', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
   var token = getToken(req.headers);
   if (token) {
+    let group = await Group.findOne({name:req.body.name});
+    if (group) return res.status(400).send({msg:'Group name is already taken,try a different name'})
     console.log(req.body);
-    let group = new Group({
+      group = new Group({
       creator : req.user.username,
       name : req.body.name,
       description:req.body.description
@@ -117,27 +119,44 @@ router.put('/group/:id', passport.authenticate('jwt', { session: false}) ,async 
   if (token) {
       console.log(req.user.username);
       console.log(req.params.id);
+
       let group = await Group.findById(req.params.id);
       if (!group) return res.status(404).send({msg:'Group was not found'})
       console.log(group);
-
+      console.log("before find NOTHER");
+      //check if name alredy taken 
+      let otherGroup = await Group.find().and([
+          {name:req.body.name},
+          {_id:{ $ne: req.params.id }}
+        ])
+        console.log('other group ',otherGroup)
+      if (otherGroup.length > 0) return res.status(400).send({msg:'Group name is already taken'})
+    //check that has premmisions to edit
+    console.log( group.creator === req.user.username)
+   
       if (group.creator === req.user.username) {
-        group = {
-          creator : req.user.username,
-          name : req.body.name,
-          description:req.body.description
-        };
-        group = await group.save();
-        var mesg =group==null?"Error occured ,group wasn\'t added":'Group was updated sucessesfully';
-        console.log('addGroupStatus',group)
-        if (mesg.match(/Error*/)) {
-          res.status(500).send({msg:mesg})
-        }else{
-          console.log('in else add - 200')
-          res.send({msg:mesg})
+          console.log('in if creator')
+
+          group.creator = req.user.username;
+          group.name = req.body.name;
+          group.description=req.body.description;
+          let {error} = validateGroup(group);
+          console.log('eeror Joi post group',error.details[0].message)
+           if(error && error.details[0].message!='"$__" is not allowed') return res.status(404).json({success: false, msg: error.details[0].message});
+            group = await group.save();
+          var mesg =group==null?"Error occured ,group wasn\'t updated":'Group was updated sucessesfully';
+          console.log('addGroupStatus',group)
+          if (mesg.match(/Error*/)) {
+            res.status(500).send({msg:mesg})
+          }else{
+            console.log('in else add - 200')
+            res.send({msg:mesg})
+          }
+      }else{
+        return res.status(403).send({ msg: 'Unauthorized.'});
         }
-      }}else {
-     return res.status(403).send({success: false, msg: 'Unauthorized.'});
+     } else {
+     return res.status(403).send({ msg: 'Unauthorized.'});
     }   
   });
 

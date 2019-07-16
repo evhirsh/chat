@@ -22,7 +22,7 @@ export class ChatService {
 
   getSpecificGroup(gid,httpOptions){
      return  this.http.get(`/api/group/${gid}`,httpOptions).toPromise().then((data:any) =>{
-        console.log("in add then service",data);
+        console.log("in spec then service",data);
         return data;
       }).catch(err => {
         console.log("in get by id throw err");
@@ -46,7 +46,13 @@ export class ChatService {
     }).catch(err => {console.log("in throw err");throw err})  
   }
 
-
+updateGroup(groupObj,httpOptions){
+    return this.http.put(`/api/group/${groupObj.id}`,groupObj,httpOptions)
+    .toPromise().then((data:any) => { 
+        console.log("in then service",data);
+        this.getGroups(httpOptions);
+    }).catch(err => {console.log("in throw err");throw err})  
+}
   
   private socket = io('http://localhost:3000');
 

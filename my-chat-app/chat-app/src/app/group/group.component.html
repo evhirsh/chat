@@ -4,7 +4,7 @@
         {{message}}
       </div>
   <h1>Chat Groups Lists Info <i class="fa fa-plus-circle" data-toggle="modal" data-target="#myModal"></i></h1>
-  <table class="table">
+  <table class="table" style="scroll-behavior: auto">
     <thead>
       <tr>
         <th>Name</th>
@@ -16,14 +16,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let group of groups$">
-        <td>{{ group.name }}</td>
-        <td>{{ group.creator }}</td>
-        <td title="{{ group.description }}">{{ (group.description.length>6)? (group.description | slice:0:10)+'...':(group.description) }}</td> 
-        <td>{{ group.date | date: 'dd/MM/yyyy'}}</td>
+        <td >{{ group.name }}</td>
+        <td >{{ group.creator }}</td>
+        <td  title="{{ group.description }}">{{ (group.description.length>6)? (group.description | slice:0:10)+'...':(group.description) }}</td> 
+        <td  >{{ group.date | date: 'dd/MM/yyyy'}}</td>
         <td >
           <div>
           <i class="fa fa-trash" (click)="removeGroup(group.name)"> </i>
-          <i class="fa fa-edit" (click)="openEditModal(group._id)" data-toggle="modal" data-target="#myEditModal"></i>
+          <i class="fa fa-edit" (click)="openEditModal(group._id)" data-toggle="modal" data-target="#myEditModal" data-backdrop="static" data-keyboard="false"></i>
         </div>
       </td>
       </tr>
@@ -59,7 +59,7 @@
         <!-- Modal footer -->
         <div class="modal-footer" style="display: inline;">
             <button type="button" class="btn btn-danger " data-dismiss="modal">Close</button>
-            <button type="submit" *ngIf="inputGname!=''" (click)="addNewGroup(nameG.value,desc.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
+            <button type="submit" *ngIf="isGnameValid" (click)="addNewGroup(nameG.value,desc.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
         </div>
   
       </div>
@@ -71,28 +71,28 @@
   
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title"> Group Adding</h4>
+          <h4 class="modal-title"> Group Updating</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
   
         <!-- Modal body -->
         <div class="modal-body" >
-          <form>
+          <form #editForm>
               <div class="form-group">
                 <label for="name">Group Name:</label> 
-                <input #newGroup type="text" (keyup)="checkValid(newGroup.value)" class="form-control" placeholder="Name of the group" value="{{inputGname}}" required minlength="3" maxlength="15">
+                <input #newGroup type="text" (keyup)="checkValid(newGroup.value)" class="form-control" placeholder="Name of the group" value="{{editInputGname}}" required minlength="3" maxlength="15">
              </div>
              <div class="form-group">
                <label for="desc">Description:</label>
-                <textarea #newDesc placeholder="Description" type="text" class="form-control" minlength="3" maxlength="25" >{{editDescInput}}</textarea>
+                <textarea #newDesc name="newDesc" placeholder="Description" (keyup)="checkIfdecChanged()" type="text" class="form-control"  [(ngModel)]="editDescInput" maxlength="25" >{{editDescInput}}</textarea>
              </div>
           </form>
         </div>
   
         <!-- Modal footer -->
         <div class="modal-footer" style="display: inline;">
-            <button type="button" class="btn btn-danger " data-dismiss="modal">Close</button>
-            <button type="submit" *ngIf="inputGname!=''" (click)="updateGroup(newGroup.value,newDesc.value)" class="btn btn-danger" data-dismiss="modal">Update</button>
+            <button type="button" class="btn btn-danger " data-dismiss="modal" (click)="clearModal()">Close</button>
+            <button type="submit" *ngIf='(!isGnameValid)||isdecChanged' (click)="updateGroup(newGroup.value,newDesc.value,editGid)" class="btn btn-danger" data-dismiss="modal">Update</button>
         </div>
   
       </div>
