@@ -59,7 +59,7 @@
         <!-- Modal footer -->
         <div class="modal-footer" style="display: inline;">
             <button type="button" class="btn btn-danger " data-dismiss="modal">Close</button>
-            <button type="submit" *ngIf="isGnameValid" (click)="addNewGroup(nameG.value,desc.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
+            <button type="submit" *ngIf=" (nameG?.dirty || desc?.dirty)" (click)="addNewGroup(nameG.value,desc.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
         </div>
   
       </div>
@@ -72,7 +72,7 @@
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title"> Group Updating</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-dismiss="modal" (click)="clearModal()">&times;</button>
         </div>
   
         <!-- Modal body -->
@@ -92,7 +92,7 @@
         <!-- Modal footer -->
         <div class="modal-footer" style="display: inline;">
             <button type="button" class="btn btn-danger " data-dismiss="modal" (click)="clearModal()">Close</button>
-            <button type="submit" *ngIf='(!isGnameValid)||isdecChanged' (click)="updateGroup(newGroup.value,newDesc.value,editGid)" class="btn btn-danger" data-dismiss="modal">Update</button>
+            <button type="submit" *ngIf='(isGnameValid)' (click)="updateGroup(newGroup.value,newDesc.value,editGid)" class="btn btn-danger" data-dismiss="modal">Update</button>
         </div>
   
       </div>

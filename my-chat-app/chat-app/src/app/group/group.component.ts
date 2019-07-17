@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Router } from "@angular/router";
 import { Observable,of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -57,6 +57,7 @@ export class GroupComponent implements OnInit {
         this.editDescInput = data.description;
         this.editInputGname = data.name;
         this.editGid = data._id;
+        this.isGnameValid=true
      }).catch(err => {
       console.log('specific g errrrrrrr',err.error.msg)
       this.message = err.error.msg;
@@ -67,6 +68,7 @@ export class GroupComponent implements OnInit {
      console.log("in clear modal")
     this.editDescInput = '';
     this.editInputGname = '';
+    this.isdecChanged=false;
    }
    addNewGroup(name1,desc){
     console.log(name1);

@@ -12,6 +12,8 @@ export class ChatService {
 
     private groups = new BehaviorSubject([]);
     gruopList$ :Observable<any> =this.groups.asObservable();
+    private messages = new BehaviorSubject([{}]);
+    messagesList$ :Observable<any> =this.messages.asObservable();
     
   constructor(private  http: HttpClient) { }
 
@@ -53,6 +55,28 @@ updateGroup(groupObj,httpOptions){
         this.getGroups(httpOptions);
     }).catch(err => {console.log("in throw err");throw err})  
 }
+
+//-----------------------
+
+// getMessages(httpOptions){
+//         this.http.get('/api/message', httpOptions).toPromise()
+//         .then( (data : any) => this.messages.next(data))
+// }
+
+
+getRoomMessages(room,httpOptions){
+    return this.http.get(`/api/message/${room}`, httpOptions).toPromise()
+    .then( (data : any) => this.messages.next(data)).catch(err => {
+        console.log("in get rooms by id throw err");
+        throw err
+      })
+}
+
+insertMsgToDB(data,httpOptions){
+    return this.http.post('/api/message',data,httpOptions).toPromise()
+    .catch(err => {console.log("in msgPost throw err");throw err})
+}
+//-----------------------
   
   private socket = io('http://localhost:3000');
 
@@ -88,9 +112,13 @@ updateGroup(groupObj,httpOptions){
         return observable;
     }
 
-    sendMessage(data)
+    sendMessage(data,httpOptions)
     {
-        this.socket.emit('message',data);
+        this.insertMsgToDB(data,httpOptions).then(d =>{
+            this.socket.emit('message',data);
+            return true;
+        }).catch(err => alert('Error :'+err))
+        // this.socket.emit('message',data);
     }
 
     newMessageReceived(){

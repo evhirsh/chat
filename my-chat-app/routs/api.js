@@ -6,11 +6,9 @@ require('../config/passport')(passport);
 const jwt = require('jsonwebtoken');
 const {User,validateUser} = require("../models/user");
 const {Group,validateGroup} = require("../models/group");
+const {Message,validateMessage} = require("../models/message");
 const getToken = require('../helpers/getToken');
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.send('Express api');
-});
+
 
 router.post('/signup' ,async (req,res) => {
   if (!req.body.username || !req.body.password) {
@@ -97,9 +95,9 @@ router.post('/group', passport.authenticate('jwt', { session: false}) ,async (re
       name : req.body.name,
       description:req.body.description
     });
-    // let {error} = validateGroup(group);
-    // console.log('eeror Joi post group',error.details[0].message)
-    // if(error) return res.status(404).json({success: false, msg: error.details[0].message});
+    let {error} = validateGroup(group);
+    console.log('eeror Joi post group',error.details[0].message)
+     if(error && error.details[0].message!='"$__" is not allowed') return res.status(400).json({success: false, msg: error.details[0].message});
     group = await group.save();
     var mesg =group==null?"Error occured ,group wasn\'t added":'Group was added sucessesfully';
     console.log('addGroupStatus',group)
@@ -142,7 +140,7 @@ router.put('/group/:id', passport.authenticate('jwt', { session: false}) ,async 
           group.description=req.body.description;
           let {error} = validateGroup(group);
           console.log('eeror Joi post group',error.details[0].message)
-           if(error && error.details[0].message!='"$__" is not allowed') return res.status(404).json({success: false, msg: error.details[0].message});
+           if(error && error.details[0].message!='"$__" is not allowed') return res.status(400).json({success: false, msg: error.details[0].message});
             group = await group.save();
           var mesg =group==null?"Error occured ,group wasn\'t updated":'Group was updated sucessesfully';
           console.log('addGroupStatus',group)
@@ -188,7 +186,54 @@ router.delete('/group/:id', passport.authenticate('jwt', { session: false}) ,asy
   }   
 });
 
+//--------------------message routes ---------------------------------
 
+router.get('/message', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token) {
+    let messages = await Message.find().select(' -v');
+    console.log("in getMsg rout",messages);
+    res.send(messages);
+  }else {
+    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }   
+});
+router.get('/message/:gname', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token) {
+    let messages = await Message.find({Gname:req.params.gname}).select(' -v');
+    console.log("in getMsg rout",messages);
+    res.send(messages);
+  }else {
+    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }   
+});
+router.post('/message', passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token) {
+    
+    console.log(req.body);
+    message = new Message({
+      sender : req.user.username,
+      Gname : req.body.room,
+      content:req.body.message
+    });
+    let {error} = validateMessage(message);
+    console.log('eeror Joi post msg',error.details[0].message)
+    if(error && error.details[0].message!='"$__" is not allowed') return res.status(400).json({success: false, msg: error.details[0].message});
+    message = await message.save();
+    var mesg =message==null?"Error occured ,message wasn\'t added":'Message was added sucessesfully';
+    console.log('messageStatus',message)
+    if (mesg.match(/Error*/)) {
+      res.status(500).send({msg:mesg})
+      }else{
+        console.log('in else addmsg - 200')
+        res.send({msg:mesg})
+      }
+  }else {
+    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }   
+});
 
 
 

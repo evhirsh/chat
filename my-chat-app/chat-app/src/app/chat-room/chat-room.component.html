@@ -13,32 +13,33 @@
       <div class="col-sm-5">
           <label for="roomInput">Choose room</label>
           <select name="roomInput" id="roomInput" class="form-control" [(ngModel)]="room" (change)="changeMessageArea(room)">
-              <option value="Lobby">Lobby</option>
-              <option value="Hall">Hall</option>
-              <option value="Deluxe">Deluxe</option>
+              <option></option>
+             <option *ngFor='let group of groups$'>{{group.name}}</option>
           </select>
       </div>
       <div class="col sm-2">
-          <div style="margin-top:19px;" class="pull-right"> 
-              <button type="button" class="btn btn-primary" (click)="join()">Join</button>
-              <button type="button" class="btn btn-default" (click)="leave()">Leave</button>
+          <div style="margin-top:32px;" class="pull-right" > 
+              <button type="button" class="btn btn-primary" (click)="leave()">Leave</button>
           </div>
       </div>
   </div>
 
-  <div class="row">
-      <div class="well" style="height:200px; padding:15px;scroll-behavior:auto">
+  <div >
+      <div class="well" style="height:300px; padding:15px;overflow: auto;border: 1px solid black">
+          <div *ngFor="let item of messages$">
+          <span><strong>{{item.sender}} : </strong> {{item.content}}</span>
+          </div>
           <div *ngFor="let item of messageArray">
           <span><strong>{{item.user}} : </strong> {{item.message}}</span>
           </div>
       </div>
   </div>
-  <div class="row">
-      <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="messageText">            
+  <div class="row" style="margin-top: 4pc;">
+      <div class="col-sm-10" style="padding-right: 2px">
+          <input type="text" class="form-control" [(ngModel)]="messageText" maxlength="70">            
       </div>
-      <div class="col-sm-2">
-              <button type="button" class="btn btn-success pull-right" (click)="sendMessage()">Send</button>
+      <div >
+              <button type="button" class="btn btn-success " (click)="sendMessage()">Send</button>
       </div>
   </div>
 </div>
