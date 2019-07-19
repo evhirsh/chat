@@ -26,7 +26,7 @@ data: any;
       this.data = resp;
       console.log("in logon");
       localStorage.setItem('jwtToken', this.data.token);
-      this.router.navigate(['groups']);
+      this.router.navigate(['chat']);
     }, err => {
       this.message = err.error.msg;
       })

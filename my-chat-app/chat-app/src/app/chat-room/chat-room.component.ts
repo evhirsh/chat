@@ -13,18 +13,19 @@ export class ChatRoomComponent implements OnInit {
     messages$ = this.chatService.messagesList$;
     groups$ = this.chatService.gruopList$;
     httpOptions;
+    user;
 
   ngOnInit() {
     this.httpOptions = {
         headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken'),'Content-Type':'application/json','Cache-Control': 'no-cache' })
       };
-    //   this.chatService.getuser
+      this.chatService.getUsername(this.httpOptions).then((data:any) => {this.user= data.user;console.log('user',JSON.stringify(this.user));})
+     .catch(err => console.log(err))
      this.chatService.messagesList$.subscribe(list => this.messages$ =list);
      this.chatService.getGroups(this.httpOptions);
-   this.chatService.gruopList$.subscribe(list => this.groups$ =list);
+     this.chatService.gruopList$.subscribe(list => this.groups$ =list);
   }
 
-  user:String;
   room:String;
   messageText:String;
   messageArray:Array<{user:String,message:String}> = [];

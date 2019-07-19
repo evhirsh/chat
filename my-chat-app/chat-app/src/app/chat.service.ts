@@ -3,6 +3,7 @@ import * as io from 'socket.io-client';
 import {Observable, BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { tokenReference } from '@angular/compiler';
 
 
 @Injectable({
@@ -58,10 +59,15 @@ updateGroup(groupObj,httpOptions){
 
 //-----------------------
 
+getUsername(httpOptions){
+    return this.http.get('/api/me',httpOptions).toPromise().then(data =>{
+        console.log(data+" ------data")
+        return data;
+    }).catch(err => {throw err;})
 // getMessages(httpOptions){
 //         this.http.get('/api/message', httpOptions).toPromise()
 //         .then( (data : any) => this.messages.next(data))
-// }
+}
 
 
 getRoomMessages(room,httpOptions){
@@ -124,6 +130,7 @@ insertMsgToDB(data,httpOptions){
     newMessageReceived(){
         let observable = new Observable<{user:String, message:String}>(observer=>{
             this.socket.on('new message', (data)=>{
+                console.log(data+ "this is dats")
                 observer.next(data);
             });
             return () => {this.socket.disconnect();}

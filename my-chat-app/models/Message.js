@@ -28,7 +28,7 @@ function validateMessage(message) {
     const schema = {
         sender: Joi.string().max(15).required(),
         content: Joi.string().max(70).required(),
-        name: Joi.string().min(3).max(15).required()
+        Gname: Joi.string().min(3).max(15).required()
     };
     return Joi.validate(message, schema);
 }

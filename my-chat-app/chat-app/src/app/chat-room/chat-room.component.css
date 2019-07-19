@@ -1,0 +1,48 @@
+div.DBMessage {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 2px 0;
+    display: inline-grid;
+    display: -ms-inline-grid;
+    width: 35%;
+}
+
+.chatBox {
+    height: 300px;
+    padding: 15px;
+    overflow: auto;
+    border: 1px solid black;
+    display: grid;
+    display: -md-grid;
+}
+
+div.darker {
+    border-color: #ccc;
+    background-color: #ddd;
+}
+
+strong {
+    font-size: 10px;
+}
+
+span {
+    font-size: 9.5px
+}
+
+small {
+    font-size: 7px
+}
+
+.time-right {
+    float: right;
+    color: #aaa;
+}
+
+/* Style time text */
+
+.time-left {
+    float: left;
+    color: #999;
+}

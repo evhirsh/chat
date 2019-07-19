@@ -46,6 +46,7 @@ router.post('/signup' ,async (req,res) => {
 router.post('/signin' , async (req,res) => {
   console.log("in sign in",req.body);
   let user = await User.findOne({username:req.body.username});
+  console.log('user',user)
         if (!user) {
           return res.status(401).send({success: false, msg: 'Username isn\'t exists.'});
         } else {
@@ -235,6 +236,16 @@ router.post('/message', passport.authenticate('jwt', { session: false}) ,async (
   }   
 });
 
+
+router.get('/me',passport.authenticate('jwt', { session: false}) ,async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token){
+    console.log('here',req.user.username);
+   res.send({user:req.user.username});
+  }else{
+    res.sendStatus(401);
+  }
+})
 
 
 module.exports = router;

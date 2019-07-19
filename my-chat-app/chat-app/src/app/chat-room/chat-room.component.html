@@ -5,32 +5,41 @@
   </div>
   <div class="row">
       <div class="col-sm-5">
-          <div class="form-group">
-              <label for="username">Username</label>
-              <input type="text" [(ngModel)]="user" class="form-control" id="username" placeholder="Enter username">
-          </div>
-      </div>
-      <div class="col-sm-5">
           <label for="roomInput">Choose room</label>
           <select name="roomInput" id="roomInput" class="form-control" [(ngModel)]="room" (change)="changeMessageArea(room)">
               <option></option>
              <option *ngFor='let group of groups$'>{{group.name}}</option>
           </select>
       </div>
-      <div class="col sm-2">
-          <div style="margin-top:32px;" class="pull-right" > 
+      <div class="col sm-5">
+          <div style="margin-top:32px;" > 
               <button type="button" class="btn btn-primary" (click)="leave()">Leave</button>
           </div>
       </div>
   </div>
 
   <div >
-      <div class="well" style="height:300px; padding:15px;overflow: auto;border: 1px solid black">
+      <div class="well chatBox" >
           <div *ngFor="let item of messages$">
-          <span><strong>{{item.sender}} : </strong> {{item.content}}</span>
+            <div class="DBMessage row" [ngClass]="{'darker':item.sender===user,'pull-right':item.sender!=user,'pull-left':item.sender===user}" >
+                    <span><strong >{{item.sender}}: </strong><br> {{item.content}}</span>
+                <div>
+                    <small  [ngClass]="{
+                        'pull-left':item.sender===user,
+                        'pull-right':item.sender!=user}">
+                        {{item.date | date: 'dd/MM/yyyy HH:mm'}}
+                    </small>
+                </div>
+                <br>
+            </div>
           </div>
           <div *ngFor="let item of messageArray">
-          <span><strong>{{item.user}} : </strong> {{item.message}}</span>
+                <div class="DBMessage row" [ngClass]="{
+                    'darker':item.user===user,
+                    'pull-right':item.user!=user,
+                    'pull-left':item.user===user}" >
+                        <span><strong *ngIf="item.user!=user"> {{user}}: </strong> {{item.message}}</span>
+                        </div>
           </div>
       </div>
   </div>

@@ -30,21 +30,7 @@ app.use('/api', api);
 
 var port  = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
-// app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
 
-// // error handler
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500);
-//   res.send('error');
-// });
-
-/**
- * Create HTTP server.
- */
 app.all('*',(req,res) =>{
   res.sendfile(path.join(__dirname, 'chat-app\\dist\\chat-app\\index.html'))
 })

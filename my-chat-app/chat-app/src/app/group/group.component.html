@@ -59,7 +59,7 @@
         <!-- Modal footer -->
         <div class="modal-footer" style="display: inline;">
             <button type="button" class="btn btn-danger " data-dismiss="modal">Close</button>
-            <button type="submit" *ngIf=" (nameG?.dirty || desc?.dirty)" (click)="addNewGroup(nameG.value,desc.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
+            <button type="submit" (click)="addNewGroup(nameG.value,desc.value)" class="btn btn-danger" data-dismiss="modal">Add</button>
         </div>
   
       </div>

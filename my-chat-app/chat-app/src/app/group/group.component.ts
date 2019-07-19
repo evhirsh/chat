@@ -25,6 +25,7 @@ export class GroupComponent implements OnInit {
   isdecChanged =false;
   editInputGname ='';
   editDescInput ='';
+  reference = {descBeforeCange:"",GnameBeforeCange:""};
   editGid;
   groups$ = this.chatService.gruopList$;
   httpOptions;
@@ -56,6 +57,8 @@ export class GroupComponent implements OnInit {
      this.chatService.getSpecificGroup(gid,this.httpOptions).then(data =>{
         this.editDescInput = data.description;
         this.editInputGname = data.name;
+        this.reference.descBeforeCange = this.editDescInput;
+        this.reference.GnameBeforeCange = this.editInputGname;
         this.editGid = data._id;
         this.isGnameValid=true
      }).catch(err => {
@@ -68,7 +71,6 @@ export class GroupComponent implements OnInit {
      console.log("in clear modal")
     this.editDescInput = '';
     this.editInputGname = '';
-    this.isdecChanged=false;
    }
    addNewGroup(name1,desc){
     console.log(name1);
@@ -93,12 +95,11 @@ export class GroupComponent implements OnInit {
         description:desc,
         id : gid
       }
-      console.log('gname-----',gname)
-      console.log('gname-----',desc)
-      console.log('gname-----',gid)
-      this.chatService.updateGroup(g,this.httpOptions).catch(err => {
-        console.log('errrrrrrrrrr in update ',err.error.msg)
-        this.message = err.error.msg;
-      })
+      if (  (gname != this.reference.GnameBeforeCange) || (desc != this.reference.descBeforeCange) ) {
+          this.chatService.updateGroup(g,this.httpOptions).catch(err => {
+            console.log('errrrrrrrrrr in update ',err.error.msg)
+            this.message = err.error.msg;
+          })
+      }
     } 
 }
