@@ -88,6 +88,10 @@ io.on('connection',(socket)=>{
       socket.broadcast.to(newroom).emit('new user joined',  {user:socket.username, message:'has join this room.'});
   
     });
+
+    socket.on('isTyping',function(user){
+      socket.broadcast.to(socket.room).emit('typing', {message:`${user} is typing...`});
+    })
   
 });
 

@@ -16,17 +16,21 @@
               <button type="button" class="btn btn-primary" (click)="leave()">Leave</button>
           </div>
       </div>
+      <div class="col sm-5">
+          <div style="margin-top:32px;" > 
+              <p *ngIf="someOneTyping"><i class="fa fa-info-circle"></i> {{whoTyping}}</p>
+          </div>
+      </div>
+
   </div>
 
   <div >
       <div class="well chatBox" >
           <div *ngFor="let item of messages$">
             <div class="DBMessage row" [ngClass]="{'darker':item.sender===user,'pull-right':item.sender!=user,'pull-left':item.sender===user}" >
-                    <span><strong >{{item.sender}}: </strong><br> {{item.content}}</span>
+                    <span><strong >{{item.sender==user?"":item.sender+":"}}  </strong><br *ngIf="item.sender!=user"> {{item.content}}</span>
                 <div>
-                    <small  [ngClass]="{
-                        'pull-left':item.sender===user,
-                        'pull-right':item.sender!=user}">
+                    <small class="pull-right" >
                         {{item.date | date: 'dd/MM/yyyy HH:mm'}}
                     </small>
                 </div>
@@ -45,7 +49,7 @@
   </div>
   <div class="row" style="margin-top: 4pc;">
       <div class="col-sm-10" style="padding-right: 2px">
-          <input type="text" class="form-control" [(ngModel)]="messageText" maxlength="70">            
+          <input type="text" class="form-control" [(ngModel)]="messageText" (keyup)="isTyping()" maxlength="70">            
       </div>
       <div >
               <button type="button" class="btn btn-success " (click)="sendMessage()">Send</button>

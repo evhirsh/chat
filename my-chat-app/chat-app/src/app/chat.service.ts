@@ -124,13 +124,11 @@ insertMsgToDB(data,httpOptions){
             this.socket.emit('message',data);
             return true;
         }).catch(err => alert('Error :'+err))
-        // this.socket.emit('message',data);
     }
 
     newMessageReceived(){
         let observable = new Observable<{user:String, message:String}>(observer=>{
             this.socket.on('new message', (data)=>{
-                console.log(data+ "this is dats")
                 observer.next(data);
             });
             return () => {this.socket.disconnect();}
@@ -142,5 +140,23 @@ insertMsgToDB(data,httpOptions){
     switchRooms(data){
         this.socket.emit('switchRoom',data);
     }
+
+    isTyping(user){
+        this.socket.emit('isTyping',user);
+    }
+
+    typing()
+    {
+        let observable = new Observable<{user:String, message:String}>(observer=>{
+            this.socket.on('typing', (data)=>{
+                console.log('in anTypin');
+                observer.next(data);
+            });
+            return () => {this.socket.disconnect();}
+        });
+
+        return observable;
+    }
+
 }
 

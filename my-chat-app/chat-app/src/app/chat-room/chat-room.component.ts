@@ -29,6 +29,8 @@ export class ChatRoomComponent implements OnInit {
   room:String;
   messageText:String;
   messageArray:Array<{user:String,message:String}> = [];
+  someOneTyping=false;
+  whoTyping;
   constructor(private chatService:ChatService){
       this.chatService.newUserJoined()
       .subscribe(data=> this.messageArray.push(data));
@@ -39,6 +41,14 @@ export class ChatRoomComponent implements OnInit {
 
       this.chatService.newMessageReceived()
       .subscribe(data=>this.messageArray.push(data));
+     
+      this.chatService.typing()
+      .subscribe(data=>{
+        this.whoTyping=data.message;
+        this.someOneTyping=true
+      setTimeout(()=>{
+        this.someOneTyping=false;
+      },2000)});
   }
 
   join(){
@@ -64,6 +74,11 @@ export class ChatRoomComponent implements OnInit {
       .then(() => this.chatService.switchRooms(room)).catch(err =>{
           alert('Error occured ,could not load messages\n try to switch rooms again');
       })
+  }
+
+  isTyping(){
+    console.log('in here');
+    this.chatService.isTyping(this.user);
   }
 
 
