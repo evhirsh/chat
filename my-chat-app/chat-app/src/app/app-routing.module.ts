@@ -4,6 +4,7 @@ import { GroupComponent } from './group/group.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 
 
 const approutes: Routes = [
@@ -26,6 +27,11 @@ const approutes: Routes = [
     path: 'chat',
     component: ChatRoomComponent,
     data: {data :'chat'}
+  },
+  {
+    path: 'analytics',
+    component: AnalyticsComponent,
+    data: { title: 'analytics' }
   },
   { path: '',
     redirectTo: '/login',

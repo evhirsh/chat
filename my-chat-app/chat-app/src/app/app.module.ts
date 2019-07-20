@@ -9,6 +9,9 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { GroupComponent } from './group/group.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
+import { ChartsModule } from 'ng2-charts';
+import { DoughnutChartComponent } from './doughnut-chart/doughnut-chart.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 
 @NgModule({
   declarations: [
@@ -16,11 +19,13 @@ import { ChatRoomComponent } from './chat-room/chat-room.component';
     LoginComponent,
     SignupComponent,
     GroupComponent,
-    ChatRoomComponent
+    ChatRoomComponent,
+    DoughnutChartComponent,
+    AnalyticsComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,FormsModule,HttpClientModule
+    AppRoutingModule,FormsModule,HttpClientModule,ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
