@@ -1,9 +1,15 @@
-<p>
-  analytics works!
-</p>
-<div style="display:grid;">
-<app-doughnut-chart class="col-lg-8" [doughnutChartLabels]="doughnutChartLabels"
- [doughnutChartData]="doughnutChartData" [doughnutChartType]=doughnutChartType></app-doughnut-chart>
-<app-doughnut-chart  class="col-lg-8" [doughnutChartLabels]="doughnutChartLabels"
- [doughnutChartData]="doughnutChartData" [doughnutChartType]=doughnutChartType></app-doughnut-chart>
+
+<div style="display:flex;padding: 30px">
+<div class="col-lg-6">
+    <h4 style="text-align: center;font-style: oblique">Popular Groups By messages
+      <i class="fa fa-info-circle" title="Calculated By The Number Of Messages In Each Group" style="font-size: 12px"></i></h4>
+    <app-doughnut-chart  [doughnutChartLabels]="doughnutChartLabels1"
+     [doughnutChartData]="doughnutChartData1" [doughnutChartType]=doughnutChartType [colors]="colors1"></app-doughnut-chart>
+</div>
+ <div class="col-lg-6">
+  <h4 style="text-align: center;font-style: oblique">My Activity In groups
+    <i class="fa fa-info-circle" title="Calculated By User's Number Of Messages In Each Group " style="font-size: 12px"></i></h4>
+ <app-doughnut-chart   [doughnutChartLabels]="doughnutChartLabels"
+  [doughnutChartData]="doughnutChartData" [doughnutChartType]=doughnutChartType [colors]="colors"></app-doughnut-chart>
+ </div>
 </div>

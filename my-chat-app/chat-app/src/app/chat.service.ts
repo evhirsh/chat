@@ -82,6 +82,25 @@ insertMsgToDB(data,httpOptions){
     return this.http.post('/api/message',data,httpOptions).toPromise()
     .catch(err => {console.log("in msgPost throw err");throw err})
 }
+
+
+getMyStaticsPerGroupByMessages(httpOptions){
+    return this.http.get('/api/statistic/groupsVSmessages',httpOptions).toPromise()
+    .then((data:any) => {return data})
+    .catch(err => {
+        console.log("in get statics throw err");
+        throw err
+      })
+}
+getGroupsStatics(httpOptions){
+    return this.http.get('/api/statistic/popularityOfGroups',httpOptions).toPromise()
+    .then((data:any) => {return data})
+    .catch(err => {
+        console.log("in get statics throw err");
+        throw err
+      })
+}
+
 //-----------------------
   
   private socket = io('http://localhost:3000');

@@ -3,7 +3,7 @@
   <li><a class="active" >Home</a></li>
   <li><a [routerLink]="['/chat']" >Chat</a></li>
   <li><a [routerLink]="['/groups']">Groups Info</a></li>
-  <li><a >Analitycs</a></li>
+  <li><a [routerLink]="['/analytics']">Analytics</a></li>
   <li *ngIf="isLogin" class="right"><button (click)="logout()">Logout</button></li>
 </ul>
 </div>

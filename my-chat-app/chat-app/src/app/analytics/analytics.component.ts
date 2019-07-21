@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { DoughnutChartComponent } from '../doughnut-chart/doughnut-chart.component';
 import { ChartType } from 'chart.js';
 import { MultiDataSet, Label } from 'ng2-charts';
-
+import { ChatService } from '../chat.service'
 
 @Component({
   selector: 'app-analytics',
@@ -11,17 +12,47 @@ import { MultiDataSet, Label } from 'ng2-charts';
 })
 export class AnalyticsComponent implements OnInit {
 
-  public doughnutChartLabels: Label[] = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales','1','5','5','5','55','55','5555','jj','hhh'];
-  public doughnutChartData: MultiDataSet = [
-    [350, 450, 100,50,88,44,55,88,66,55,5,8]
-  ];
+  public doughnutChartLabels: Label[] = [];
+  public doughnutChartData=[];
+  public doughnutChartLabels1: Label[] = [];
+  public doughnutChartData1=[];
   public doughnutChartType: ChartType = 'doughnut';
+  public colors=
+    [{
+      backgroundColor:[]
+    }];
+  public colors1=
+    [{
+      backgroundColor:[]
+    }];
 
+  httpOptions;
 
-
-  constructor() { }
+  constructor(private chatService:ChatService) {}
 
   ngOnInit() {
+    this.httpOptions = {
+      headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken'),'Content-Type':'application/json','Cache-Control': 'no-cache' })
+    };
+  this.chatService.getMyStaticsPerGroupByMessages(this.httpOptions).then(data =>{
+    data.forEach(element => {
+      this.doughnutChartData.push(element.messagesCount);
+      this.doughnutChartLabels.push((element._id.Gname));
+      this.colors[0].backgroundColor.push(this.getColor())
+    });
+  }).catch(err => {return})
+  
+  this.chatService.getGroupsStatics(this.httpOptions).then(data =>{
+    data.forEach(element => {
+      this.doughnutChartData1.push(element.messagesCount);
+      this.doughnutChartLabels1.push((element._id.Gname));
+      this.colors1[0].backgroundColor.push(this.getColor())
+    });
+  }).catch(err => {return})
+  }
+
+  getColor() {
+    return ( '#' + Math.random().toString(16).slice(2,8));
   }
 
 }

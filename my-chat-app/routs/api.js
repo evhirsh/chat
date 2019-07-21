@@ -8,6 +8,7 @@ const {User,validateUser} = require("../models/user");
 const {Group,validateGroup} = require("../models/group");
 const {Message,validateMessage} = require("../models/message");
 const getToken = require('../helpers/getToken');
+const moment = require('moment');
 
 
 router.post('/signup' ,async (req,res) => {
@@ -245,7 +246,78 @@ router.get('/me',passport.authenticate('jwt', { session: false}) ,async (req,res
   }else{
     res.sendStatus(401);
   }
-})
+});
+
+router.get('/statistic/groupsVSmessages',passport.authenticate('jwt', { session: false}),async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token){
+    let messagesPerGroup = await Message.aggregate([
+      { $match :{"sender":req.user.username}}
+      ,{
+        $group : {
+          "_id":{
+            "sender":'$sender',
+            "Gname":"$Gname"
+          },
+          "messagesCount":{ "$sum": 1 }
+        }
+      }
+    ]);
+    console.log('result ' , messagesPerGroup);
+    res.send(messagesPerGroup);
+  }else{
+    res.sendStatus(401);
+  }
+});
+
+
+// router.get('/statistic/lineChart',passport.authenticate('jwt', { session: false}),async (req,res) =>{
+//   var token = getToken(req.headers);
+//   if (token){
+//     let messagesPerGroup = await Message.aggregate([
+//       { $match :{"sender":req.user.username}}
+//       ,{
+//         $group : {
+//           "_id":{
+//             "sender":'$sender',
+//             "date":"$date"
+//           },
+//           "messagesCount":{ "$sum": 1 }
+//         }
+//       },{$sort : {"_id.date":1}}
+//     ]);
+//     console.log('result ' , messagesPerGroup);
+//     messagesPerGroup.forEach(element => {
+//       element._id.date = moment(element._id.date).format("DD/MM/YYYY HH:mm");  
+//     });
+//     res.send(messagesPerGroup);
+//   }else{
+//     res.sendStatus(401);
+//   }
+// });
+
+
+router.get('/statistic/popularityOfGroups',passport.authenticate('jwt', { session: false}),async (req,res) =>{
+  var token = getToken(req.headers);
+  if (token){
+    let messagesPerGroup = await Message.aggregate([
+    {
+        $group : {
+          "_id":{
+            "sender":'$sender',
+            "Gname":"$Gname"
+          },
+          "messagesCount":{ "$sum": 1 }
+        }
+      }
+    ]);
+    console.log('result ' , messagesPerGroup);
+    res.send(messagesPerGroup);
+  }else{
+    res.sendStatus(401);
+  }
+
+});
 
 
 module.exports = router;
