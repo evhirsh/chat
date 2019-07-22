@@ -4,9 +4,9 @@ const passport = require('passport');
 const config = require('../config/db');
 require('../config/passport')(passport);
 const jwt = require('jsonwebtoken');
-const {User,validateUser} = require("../models/user");
-const {Group,validateGroup} = require("../models/group");
-const {Message,validateMessage} = require("../models/message");
+const {User,validateUser} = require("../models/User");
+const {Group,validateGroup} = require("../models/Group");
+const {Message,validateMessage} = require("../models/Message");
 const getToken = require('../helpers/getToken');
 const moment = require('moment');
 
