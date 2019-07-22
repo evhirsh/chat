@@ -103,7 +103,8 @@ getGroupsStatics(httpOptions){
 
 //-----------------------
   
-  private socket = io('http://localhost:3000');
+//   private socket = io('http://localhost:3000');
+  private socket = io('http://ec2-18-217-5-193.us-east-2.compute.amazonaws.com:3000');
 
     joinRoom(data)
     {
