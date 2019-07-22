@@ -19,7 +19,8 @@ export class GroupComponent implements OnInit {
 
   constructor(private router: Router,private chatService : ChatService) { }
   
-  
+  isLogin ;
+
   message='';
   isGnameValid =false;
   isdecChanged =false;
@@ -30,11 +31,18 @@ export class GroupComponent implements OnInit {
   groups$ = this.chatService.gruopList$;
   httpOptions;
   ngOnInit() {
+    this.isLogin = localStorage.getItem('jwtToken') ? true:false;
+
+    if (this.isLogin) {
       this.httpOptions = {
-      headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken'),'Content-Type':'application/json','Cache-Control': 'no-cache' })
-    };
-   this.chatService.getGroups(this.httpOptions);
-   this.chatService.gruopList$.subscribe(list => this.groups$ =list);
+        headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken'),'Content-Type':'application/json','Cache-Control': 'no-cache' })
+      };
+     this.chatService.getGroups(this.httpOptions);
+     this.chatService.gruopList$.subscribe(list => this.groups$ =list);
+    }else{
+      this.router.navigate(['login']);
+    }
+   
    }
 
    checkValid(text){

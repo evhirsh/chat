@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import  { ChatService } from '../chat.service' 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat-room',
@@ -10,13 +11,17 @@ import  { ChatService } from '../chat.service'
 })
 export class ChatRoomComponent implements OnInit {
 
-    
+  isLogin;
+
     messages$ = this.chatService.messagesList$;
     groups$ = this.chatService.gruopList$;
     httpOptions;
     user;
 
   ngOnInit() {
+    this.isLogin = localStorage.getItem('jwtToken') ? true:false;
+
+    if(this.isLogin){
     this.httpOptions = {
         headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken'),'Content-Type':'application/json','Cache-Control': 'no-cache' })
       };
@@ -25,14 +30,17 @@ export class ChatRoomComponent implements OnInit {
      this.chatService.messagesList$.subscribe(list => this.messages$ =list);
      this.chatService.getGroups(this.httpOptions);
      this.chatService.gruopList$.subscribe(list => this.groups$ =list);
+  }else{
+    this.router.navigate(['login']);
   }
+}
 
   room:String;
   messageText:String;
   messageArray:Array<{user:String,message:String}> = [];
   someOneTyping=false;
   whoTyping;
-  constructor(private chatService:ChatService){
+  constructor(private chatService:ChatService,private router:Router){
       this.chatService.newUserJoined()
       .subscribe(data=> this.messageArray.push(data));
 

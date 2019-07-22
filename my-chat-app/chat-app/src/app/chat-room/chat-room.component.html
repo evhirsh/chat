@@ -1,11 +1,11 @@
 <div class="container-fluid">
   <div class="row">
-      <h2> Chat Application</h2>
+      <h2> Let's Chat</h2>
       <hr>
   </div>
-  <div class="row">
+  <div class="row" style="margin-top:5px ">
       <div class="col-sm-5">
-          <label for="roomInput">Choose room</label>
+          <label for="roomInput">Choose room:</label>
           <select name="roomInput" id="roomInput" class="form-control" [(ngModel)]="room" (change)="changeMessageArea(room)">
               <option></option>
              <option *ngFor='let group of groups$'>{{group.name}}</option>
