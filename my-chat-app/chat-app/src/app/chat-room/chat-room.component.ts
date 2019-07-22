@@ -10,6 +10,7 @@ import  { ChatService } from '../chat.service'
 })
 export class ChatRoomComponent implements OnInit {
 
+    
     messages$ = this.chatService.messagesList$;
     groups$ = this.chatService.gruopList$;
     httpOptions;
@@ -66,6 +67,7 @@ export class ChatRoomComponent implements OnInit {
   sendMessage()
   {
       this.chatService.sendMessage({user:this.user, room:this.room, message:this.messageText},this.httpOptions);
+      this.messageText = '';
   }
 
   changeMessageArea(room){

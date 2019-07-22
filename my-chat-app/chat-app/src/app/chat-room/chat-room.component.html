@@ -42,7 +42,7 @@
                     'darker':item.user===user,
                     'pull-right':item.user!=user,
                     'pull-left':item.user===user}" >
-                        <span><strong *ngIf="item.user!=user"> {{user}}: </strong> {{item.message}}</span>
+                        <span><strong *ngIf="item.user!=user"> {{item.user}}: </strong> {{item.message}}</span>
                         </div>
           </div>
       </div>
@@ -52,7 +52,7 @@
           <input type="text" class="form-control" [(ngModel)]="messageText" (keyup)="isTyping()" maxlength="70">            
       </div>
       <div >
-              <button type="button" class="btn btn-success " (click)="sendMessage()">Send</button>
+              <button type="button" class="btn btn-success" (click)="sendMessage()">Send</button>
       </div>
   </div>
 </div>
